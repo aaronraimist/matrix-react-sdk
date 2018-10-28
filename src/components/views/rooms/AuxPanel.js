@@ -23,54 +23,22 @@ import dis from "../../../dispatcher";
 import ObjectUtils from '../../../ObjectUtils';
 import AppsDrawer from './AppsDrawer';
 import { _t } from '../../../languageHandler';
+import FileDropTarget from './FileDropTarget';
 
-
-module.exports = React.createClass({
-    displayName: 'AuxPanel',
-
-    propTypes: {
-        // js-sdk room object
-        room: PropTypes.object.isRequired,
-        userId: PropTypes.string.isRequired,
-        showApps: PropTypes.bool, // Render apps
-        hideAppsDrawer: PropTypes.bool, // Do not display apps drawer and content (may still be rendered)
-
-        // Conference Handler implementation
-        conferenceHandler: PropTypes.object,
-
-        // set to true to show the file drop target
-        draggingFile: PropTypes.bool,
-
-        // set to true to show the 'active conf call' banner
-        displayConfCallNotification: PropTypes.bool,
-
-        // maxHeight attribute for the aux panel and the video
-        // therein
-        maxHeight: PropTypes.number,
-
-        // a callback which is called when the content of the aux panel changes
-        // content in a way that is likely to make it change size.
-        onResize: PropTypes.func,
-    },
-
-    defaultProps: {
-        showApps: true,
-        hideAppsDrawer: false,
-    },
-
-    shouldComponentUpdate: function(nextProps, nextState) {
+export default class AuxPanel extends React.Component {
+    shouldComponentUpdate(nextProps, nextState) {
         return (!ObjectUtils.shallowEqual(this.props, nextProps) ||
                 !ObjectUtils.shallowEqual(this.state, nextState));
-    },
+    }
 
-    componentDidUpdate: function(prevProps, prevState) {
+    componentDidUpdate(prevProps, prevState) {
         // most changes are likely to cause a resize
         if (this.props.onResize) {
             this.props.onResize();
         }
-    },
+    }
 
-    onConferenceNotificationClick: function(ev, type) {
+    onConferenceNotificationClick(ev, type) {
         dis.dispatch({
             action: 'place_call',
             type: type,
@@ -78,24 +46,14 @@ module.exports = React.createClass({
         });
         ev.stopPropagation();
         ev.preventDefault();
-    },
+    }
 
-    render: function() {
+    render() {
         const CallView = sdk.getComponent("voip.CallView");
-        const TintableSvg = sdk.getComponent("elements.TintableSvg");
 
         let fileDropTarget = null;
         if (this.props.draggingFile) {
-            fileDropTarget = (
-                <div className="mx_RoomView_fileDropTarget">
-                    <div className="mx_RoomView_fileDropTargetLabel"
-                      title={_t("Drop File Here")}>
-                        <TintableSvg src="img/upload-big.svg" width="45" height="59" />
-                        <br />
-                        { _t("Drop file here to upload") }
-                    </div>
-                </div>
-            );
+            fileDropTarget = <FileDropTarget />;
         }
 
         let conferenceCallNotification = null;
@@ -152,5 +110,37 @@ module.exports = React.createClass({
                 { this.props.children }
             </div>
         );
-    },
-});
+    }
+}
+
+AuxPanel.propTypes = {
+    // js-sdk room object
+    room: PropTypes.object.isRequired,
+    userId: PropTypes.string.isRequired,
+    showApps: PropTypes.bool, // Render apps
+    hideAppsDrawer: PropTypes.bool, // Do not display apps drawer and content (may still be rendered)
+
+    // Conference Handler implementation
+    conferenceHandler: PropTypes.object,
+
+    // set to true to show the file drop target
+    draggingFile: PropTypes.bool,
+
+    // set to true to show the 'active conf call' banner
+    displayConfCallNotification: PropTypes.bool,
+
+    // maxHeight attribute for the aux panel and the video
+    // therein
+    maxHeight: PropTypes.number,
+
+    // a callback which is called when the content of the aux panel changes
+    // content in a way that is likely to make it change size.
+    onResize: PropTypes.func,
+}
+
+AuxPanel.defaultProps = {
+    showApps: true,
+    hideAppsDrawer: false,
+}
+
+
