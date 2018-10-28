@@ -62,6 +62,10 @@ limitations under the License.
     position: absolute;
 }
 
+.mx_RoomView_fileDropTarget_hide {
+    display: none;
+}
+
 .mx_RoomView_auxPanel {
     order: 2;
 

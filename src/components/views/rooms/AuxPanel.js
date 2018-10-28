@@ -52,9 +52,9 @@ export default class AuxPanel extends React.Component {
         const CallView = sdk.getComponent("voip.CallView");
 
         let fileDropTarget = null;
-        if (this.props.draggingFile) {
+        //if (this.props.draggingFile) {
             fileDropTarget = <FileDropTarget />;
-        }
+        //}
 
         let conferenceCallNotification = null;
         if (this.props.displayConfCallNotification) {
